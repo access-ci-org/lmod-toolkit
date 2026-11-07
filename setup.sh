@@ -7,7 +7,7 @@ NO=1  #no touchee
 # ###
 # User might want to change these, though should use environment vars
 
-INSTALL_DIR="${LMTK_INSTALL_DIR:-$HOME/lmod-tools}"
+INSTALL_DIR="${LMTK_INSTALL_DIR:-$HOME/lmod-toolkit}"
 DEBUG=$YES
 VERBOSE=$YES
 
@@ -18,9 +18,9 @@ VERBOSE=$YES
 # NO USER CHANGES AFTER THIS
 
 GH_USER=access-ci-org
-GH_REPO=lmod-tools
+GH_REPO=lmod-toolkit
 GH_BRANCH=main
-UV_PYTHON=3.12 #python version preferred by lmod-tools
+UV_PYTHON=3.15 #python version preferred by lmod-toolkit
 UV_DIR="${INSTALL_DIR}"/uv
 UV="${UV_DIR}"/uv
 VENV="$INSTALL_DIR"/.venv
