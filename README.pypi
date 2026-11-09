@@ -1,0 +1,14 @@
+# lmod toolkit (LMTK)
+Tools for working with lmod
+
+## Project Home
+https://github.com/access-ci-org/lmod-toolkit
+
+## Quick Install
+1. ` curl -o lmtk-setup.sh
+https://raw.githubusercontent.com/access-ci-org/lmod-toolkit/refs/heads/main/setup.sh
+`
+1. bash lmtk-setup.sh
+
+## Installation Guide
+https://github.com/access-ci-org/lmod-toolkit

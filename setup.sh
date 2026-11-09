@@ -26,7 +26,7 @@ UV="${UV_DIR}"/uv
 VENV="$INSTALL_DIR"/.venv
 V_PYTHON="$VENV"/bin/python
 # SITE_PACKAGES=  #created by mk_venv()
-# IPF_PATH=       #created by mk_venv()
+# LMTK_PATH=       #created by mk_venv()
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m'  # No Color
@@ -92,10 +92,49 @@ mk_venv() {
     # "${V_PYTHON}" -m pip install --upgrade pip
     # success "Updated to latest pip version"
   }
-  # SITE_PACKAGES=$(
-  #   "$V_PYTHON" -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])'
-  # )
-  # IPF_PATH="$SITE_PACKAGES"/ipf
+  SITE_PACKAGES=$(
+    "$V_PYTHON" -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])'
+  )
+  LMTK_PATH="$SITE_PACKAGES"/lmod_toolkit
+}
+
+
+is_pre_release_allowed() {
+  # to install the latest pre-release version: export LMTK_ALLOW_PRE_RELEASE=yes
+  [[ $DEBUG -eq $YES ]] && set -x
+  local _retval=$NO
+  if [[  "$LMTK_ALLOW_PRE_RELEASE" == "yes" \
+      || "$LMTK_ALLOW_PRE_RELEASE" == "YES" \
+      || "$LMTK_ALLOW_PRE_RELEASE" == "Y" \
+      || "$LMTK_ALLOW_PRE_RELEASE" == "y" \
+      || "$LMTK_ALLOW_PRE_RELEASE" -eq 1
+     ]] ; then
+     _retval=$YES
+   fi
+  return $_retval
+}
+
+
+install_pre_release() {
+  [[ $DEBUG -eq $YES ]] && set -x
+  is_pre_release_allowed || return
+  "${V_PYTHON}" -m pip install \
+    --upgrade \
+    --no-cache-dir \
+    --pre \
+    --no-deps \
+    --index-url https://test.pypi.org/simple/ \
+    lmod_toolkit"${LMTK_INSTALL_VERSION:+==$LMTK_INSTALL_VERSION}" \
+    && success "Installed dev version of lmod_toolkit"
+}
+
+
+install_lmod_toolkit() {
+  [[ $DEBUG -eq $YES ]] && set -x
+  "${V_PYTHON}" -m pip install \
+    --upgrade \
+    lmod_toolkit"${LMTK_INSTALL_VERSION:+==$LMTK_INSTALL_VERSION}" \
+    && success "Ipf and dependencies installed"
 }
 
 
@@ -104,10 +143,10 @@ update_files() {
   # Update any files that need INSTALL_DIR
   local _pattern='___INSTALL_DIR___'
   local _replacement="$INSTALL_DIR"
-  # grep -r --files-with-matches -F "$_pattern" "$IPF_PATH" \
-  # | while read; do
-  #     sed -i -e "s?$_pattern?$_replacement?" "$REPLY"
-  #   done
+  grep -r --files-with-matches -F "$_pattern" "$LMTK_PATH" \
+  | while read; do
+      sed -i -e "s?$_pattern?$_replacement?" "$REPLY"
+    done
 }
 
 
@@ -116,7 +155,7 @@ mk_symlinks() {
   pushd "$INSTALL_DIR"
   local _symlink_dirs=( bin etc configure lib var )
   # for d in "${_symlink_dirs[@]}"; do
-  #   [[ -L $d ]] || ln -s "$IPF_PATH"/$d
+  #   [[ -L $d ]] || ln -s "$LMTK_PATH"/$d
   # done
   popd
   pushd "$INSTALL_DIR"/bin
