@@ -68,11 +68,14 @@ install_uv() {
     export UV_UNMANAGED_INSTALL="${UV_DIR}"
     UV_URL=https://raw.githubusercontent.com/"${GH_USER}"/"${GH_REPO}"/refs/heads/"${GH_BRANCH}"/utils/uv_installer.sh
     # allow override of UV_URL (uv installer script)
-    # [[ -n "${IPF_UV_URL}" ]] && UV_URL="${IPF_UV_URL}"
+    [[ -n "${LMTK_UV_URL}" ]] && UV_URL="${LMTK_UV_URL}"
     UV_INSTALLER="${UV_DIR}"/uv_installer.sh
     curl -LsSf --create-dirs "${UV_URL}" -o "${UV_INSTALLER}"
     sh "${UV_INSTALLER}" || die 'failed to install uv'
   }
+  #TODO - would it be useful to have a uv.toml file in {INSTALL_DIR}
+  #TODO - maybe also replace uv with a bash alias to use
+  #       "uv --config-file <PATH_TO_UV_TOML>"
 }
 
 
@@ -83,7 +86,7 @@ mk_venv() {
     export UV_NO_CACHE=1
     export UV_MANAGED_PYTHON=1
     # allow override python version
-    # [[ -n "${IPF_UV_PYTHON}" ]] && UV_PYTHON="${IPF_UV_PYTHON}"
+    [[ -n "${LMTK_UV_PYTHON}" ]] && UV_PYTHON="${LMTK_UV_PYTHON}"
     export UV_PYTHON
     "$UV" venv "$VENV"
     success "Python venv created at '$VENV'"
@@ -115,26 +118,18 @@ is_pre_release_allowed() {
 }
 
 
-install_pre_release() {
-  [[ $DEBUG -eq $YES ]] && set -x
-  is_pre_release_allowed || return
-  "${V_PYTHON}" -m pip install \
-    --upgrade \
-    --no-cache-dir \
-    --pre \
-    --no-deps \
-    --index-url https://test.pypi.org/simple/ \
-    lmod_toolkit"${LMTK_INSTALL_VERSION:+==$LMTK_INSTALL_VERSION}" \
-    && success "Installed dev version of lmod_toolkit"
-}
-
-
 install_lmod_toolkit() {
   [[ $DEBUG -eq $YES ]] && set -x
-  "${V_PYTHON}" -m pip install \
-    --upgrade \
-    lmod_toolkit"${LMTK_INSTALL_VERSION:+==$LMTK_INSTALL_VERSION}" \
-    && success "Ipf and dependencies installed"
+  export UV_DEFAULT_INDEX=https://pypi.org/simple
+  is_pre_release_allowed && {
+    export UV_INDEX=https://test.pypi.org/simple
+    export UV_PRERELEASE=allow
+  }
+  pushd "${INSTALL_DIR}"
+  "${UV}" pip install \
+    lmod-toolkit"${LMTK_INSTALL_VERSION:+==$LMTK_INSTALL_VERSION}"
+  popd
+
 }
 
 
@@ -175,6 +170,8 @@ restore_config_links() {
 install_uv
 
 mk_venv
+
+install_lmod_toolkit
 
 # update_files
 

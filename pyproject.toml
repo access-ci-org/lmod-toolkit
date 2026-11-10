@@ -5,8 +5,8 @@ build-backend = "setuptools.build_meta:__legacy__"
 # see also https://setuptools-git-versioning.readthedocs.io/en/stable/options/version_callback.html
 
 [project]
-name = "lmod_toolkit"
-requires-python = "==3.15.*"
+name = "lmod-toolkit"
+requires-python = ">=3.14"
 dependencies = [
 ]
 dynamic = [
@@ -27,7 +27,7 @@ keywords = [
   "publishing",
 ]
 authors = [
-  {name = "Andy Loftus", email = "aloftus@illinois.com"},
+  {name = "Andy Loftus", email = "aloftus@illinois.edu"},
   {name = "Eric Blau", email = "blau@globus.org"},
 ]
 
@@ -37,7 +37,17 @@ Repository = "https://github.com/access-ci-org/lmod-toolkit"
 [tool.setuptools.dynamic]
 readme = {file = ["README.pypi"], content-type = "text/markdown"}
 
+
+# needed because the package name (lmod-toolkit)
+# doesn't match the import name (lmod_toolkit)
+# [tool.setuptools.packages.find]
+# where = ["src"]
+# include = ["lmod_toolkit*"]
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+
 [tool.setuptools_scm]
-version_file = "lmod_toolkit/_version.py"
-version_scheme = "ipf.build_helper:mk_version"
+version_file = "src/lmod_toolkit/_version.py"
+version_scheme = "ipf.build_helper:mk_version" # a published version must exist in pypi
 local_scheme = "no-local-version"  # local version component not allowed on pypi
