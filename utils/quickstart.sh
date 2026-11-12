@@ -9,7 +9,7 @@ set -x
 # where to save the installer script
 LMTK_SETUP="${HOME}"/lmtk-setup.sh
 
-# set to an absolute path (default is $HOME/ipf)
+# set to an absolute path (default is $HOME/lmod-toolkit)
 LMTK_INSTALL_DIR="${HOME}"/lmod-toolkit
 
 # dont actually do anything, just print out a list of commands
@@ -17,7 +17,7 @@ LMTK_INSTALL_DIR="${HOME}"/lmod-toolkit
 # MANUAL=yes
 
 # set to "yes" or leave unset (defaults to latest)
-LMTK_ALLOW_PRE_RELEASE=yes
+# LMTK_ALLOW_PRE_RELEASE=yes
 
 # specify an exact version of LMTK
 # get version string from
@@ -27,7 +27,7 @@ LMTK_ALLOW_PRE_RELEASE=yes
 # LMTK_INSTALL_VERSION=0.0.2
 
 # either a branch name or leave unset (defaults to main)
-LMTK_GIT_BRANCH=poc
+# LMTK_GIT_BRANCH=poc
 
 # specify a specific version of python if needed
 # LMTK_UV_PYTHON=3.15

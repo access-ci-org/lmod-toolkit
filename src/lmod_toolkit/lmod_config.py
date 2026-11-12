@@ -1,34 +1,35 @@
-import json
-import subprocess
-import pprint
 import functools
+import json
+import pprint
+import subprocess
 
 __all__ = [
-    'Lmod_Config',
+    'as_json',
+    'get_config',
 ]
 
-class Lmod_Config :
-    def __init__( self ):
-        self.raw = None
-        self.config = None
-        self._load()
+@functools.cache
+def get_config():
+    cmds = [ 'bash', '-l', '-c', 'module --config_json' ]
+    result = subprocess.run(
+        cmds,
+        capture_output=True,  # Captures both stdout and stderr
+        text=True             # Returns strings instead of bytes
+    )
+    return json.loads( result.stderr )
 
-    def _load( self ):
-        cmds = [ 'bash', '-l', '-c', 'module --config_json' ]
-        result = subprocess.run(
-            cmds,
-            capture_output=True,  # Captures both stdout and stderr
-            text=True             # Returns strings instead of bytes
-        )
-        # pprint.pprint( ['STDOUT', result.stdout] )
-        # pprint.pprint( ['STDERR', result.stderr] )
-        self.config = json.loads( result.stderr )
 
-    @functools.cached_property
-    def get_key( self, key ):
-        return self.config[ key ]
+def as_json():
+    return json.dumps( get_config() )
+
+
+def __getattr__( name ):
+    cfg = get_config()
+    try:
+        val = cfg['configT'][name]
+    except KeyError as e:
+        raise AttributeError( f"'{name}' not found" )
 
 
 if __name__ == '__main__':
-    lmc = Lmod_Config()
-    pprint.pprint( lmc.config )
+    pprint.pprint( get_config() )
