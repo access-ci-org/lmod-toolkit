@@ -1,1 +1,1 @@
-from . import lmod_config
+from . import lmod_config, lmod_spider

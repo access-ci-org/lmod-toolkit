@@ -29,6 +29,7 @@ def __getattr__( name ):
         val = cfg['configT'][name]
     except KeyError as e:
         raise AttributeError( f"'{name}' not found" )
+    return val
 
 
 if __name__ == '__main__':
