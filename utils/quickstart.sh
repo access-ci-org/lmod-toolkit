@@ -19,6 +19,9 @@ LMTK_INSTALL_DIR="${HOME}"/lmod-toolkit
 # set to "yes" or leave unset (defaults to latest)
 # LMTK_ALLOW_PRE_RELEASE=yes
 
+# set to "yes" to enable upgrading lmod-toolkit
+# LMTK_ALLOW_UPGRADE=yes
+
 # specify an exact version of LMTK
 # get version string from
 #    https://pypi.org/project/lmod-toolkit/#history      (production releases)
@@ -52,6 +55,7 @@ VENV="${LMTK_INSTALL_DIR}"/.venv
 export LMTK_UV_URL
 export LMTK_INSTALL_DIR
 [[ -n "${LMTK_ALLOW_PRE_RELEASE}" ]] && export LMTK_ALLOW_PRE_RELEASE
+[[ -n "${LMTK_ALLOW_UPGRADE}" ]] && export LMTK_ALLOW_UPGRADE
 [[ -n "${LMTK_UV_PYTHON}" ]] && export LMTK_UV_PYTHON
 [[ -n "${LMTK_INSTALL_VERSION}" ]] && export LMTK_INSTALL_VERSION
 
