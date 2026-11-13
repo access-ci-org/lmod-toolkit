@@ -118,18 +118,38 @@ is_pre_release_allowed() {
 }
 
 
+is_upgrade_allowed() {
+  # to enable upgrade of lmod-toolkit: export $LMTK_ALLOW_UPGRADE=yes
+  [[ $DEBUG -eq $YES ]] && set -x
+  local _retval=$NO
+  if [[  "$LMTK_ALLOW_UPGRADE" == "yes" \
+      || "$LMTK_ALLOW_UPGRADE" == "YES" \
+      || "$LMTK_ALLOW_UPGRADE" == "Y" \
+      || "$LMTK_ALLOW_UPGRADE" == "y" \
+      || "$LMTK_ALLOW_UPGRADE" -eq 1
+     ]] ; then
+     _retval=$YES
+   fi
+  return $_retval
+}
+
+
 install_lmod_toolkit() {
   [[ $DEBUG -eq $YES ]] && set -x
-  export UV_DEFAULT_INDEX=https://pypi.org/simple
+  local -a _cli_opts
+  is_upgrade_allowed && {
+    _cli_opts+=( '--upgrade' )
+  }
   is_pre_release_allowed && {
     export UV_INDEX=https://test.pypi.org/simple
-    export UV_PRERELEASE=allow
+      _cli_opts+=( '--prerelease-package' 'lmod-toolkit=allow' )
   }
+  export UV_DEFAULT_INDEX=https://pypi.org/simple
   pushd "${INSTALL_DIR}"
   "${UV}" pip install \
+    "${_cli_opts[@]}" \
     lmod-toolkit"${LMTK_INSTALL_VERSION:+==$LMTK_INSTALL_VERSION}"
   popd
-
 }
 
 
