@@ -1,0 +1,28 @@
+[[resources]]
+# MUST SPECIFY EXACTLY ONE OF resource_id OR group_id
+#
+# Resource ID is the name defined in cider.access-ci.org
+# Specify resource_id to either override the defaults published for group_id
+# of if there is no data published for group_id
+# [REQUIRED] string: ( set ONLY ONE of "group_id" or "resource_id")
+#resource_id =
+
+# Group ID is the name defined at:
+# https://operations-api.access-ci.org/wh2/cider/v1/access-active-groups/
+# The group_id can be used to publish a set of default software modules
+# to be used for all the resources under said group
+# [REQUIRED] string: ( set ONLY ONE of "group_id" or "resource_id")
+#group_id =
+
+# Specify a custom module path to use instead of MODULEPATH environment
+# variable
+# [OPTIONAL] string: same format and purpose of MODULEPATH
+# module_path =
+
+
+# Can specify this multiple times
+# data for each unique resource_id OR group_id will be published in turn
+#[[resources]]
+#resource_id =
+#group_id =
+# module_path =
