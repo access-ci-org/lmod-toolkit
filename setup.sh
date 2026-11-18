@@ -160,28 +160,56 @@ update_files() {
   local _replacement="$INSTALL_DIR"
   grep -r --files-with-matches -F "$_pattern" "$LMTK_PATH" \
   | while read; do
-      sed -i -e "s?$_pattern?$_replacement?" "$REPLY"
+      # update only regular files while ignoring symlinks
+      if [[ -f "$REPLY" ]] && [[ ! -L "$REPLY" ]]; then
+        sed -i -e "s?$_pattern?$_replacement?" "$REPLY"
+      fi
     done
 }
 
 
-mk_symlinks() {
+mk_support_dirs() {
   [[ $DEBUG -eq $YES ]] && set -x
-  pushd "$INSTALL_DIR"
-  local _symlink_dirs=( bin etc configure lib var )
-  # for d in "${_symlink_dirs[@]}"; do
-  #   [[ -L $d ]] || ln -s "$LMTK_PATH"/$d
-  # done
-  popd
-  pushd "$INSTALL_DIR"/bin
-  ln -s "${V_PYTHON}"
-  popd
+  local _dirs
+  _dirs=( bin data logs )
+  for d in "${_dirs[@]}"; do
+    mkdir -p "$INSTALL_DIR"/"${d}"
+  done
 }
 
 
-restore_config_links() {
+mk_source_symlinks() {
+  # For each target dir, look for dir by same name in source,
+  # for each file in source dir,
+  # create a symlink in target dir to source file
   [[ $DEBUG -eq $YES ]] && set -x
-  /bin/bash "$INSTALL_DIR"/bin/save_configs.sh
+  local -a _symlink_dirs
+  _symlink_dirs=( 'bin' )
+  for target_dir in "${_symlink_dirs[@]}"; do
+    find "${LMTK_PATH}"/"${target_dir}" -mindepth 1 -maxdepth 1 -type f -print \
+    | while read; do
+        pushd "${INSTALL_DIR}"/"${target_dir}"
+        ln -s "${REPLY}"
+        popd
+      done
+  done
+}
+
+
+mk_custom_symlinks() {
+  [[ $DEBUG -eq $YES ]] && set -x
+  pushd "$INSTALL_DIR"/bin
+  local -A _links_targets
+  _links_targets=(
+    ['mkcfg.sh']='lmtk.sh'
+    ['publish.sh']='lmtk.sh'
+    ['test.sh']='lmtk.sh'
+  )
+  for linkname in "${!_links_targets[@]}"; do
+    linktarget="${_links_targets[$linkname]}"
+    ln -s "${linktarget}" "${linkname}"
+  done
+  popd
 }
 
 
@@ -193,8 +221,10 @@ mk_venv
 
 install_lmod_toolkit
 
-# update_files
+update_files
 
-# mk_symlinks
+mk_support_dirs
 
-# restore_config_links
+mk_source_symlinks
+
+mk_custom_symlinks

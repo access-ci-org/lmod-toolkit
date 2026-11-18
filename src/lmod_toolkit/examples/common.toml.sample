@@ -1,0 +1,28 @@
+[[resources]]
+# name is one of:
+# + global_resource_id, defined in cider.access-ci.org
+# + global_group_id, defined in
+#     https://operations-api.access-ci.org/wh2/cider/v1/access-active-groups/
+# Required? YES
+# Data type: string
+name = 
+
+# type is one of: "global_resource_id", "global_group_id"
+# it is essentially telling where the "name" (above) came from
+# Required? YES
+# Data type: string
+type = 
+
+# Specify a custom module path to use instead of MODULEPATH environment variable
+# [OPTIONAL] string: same format and purpose of MODULEPATH
+# Required? No (defaults to MODULEPATH environment variable)
+# Data type: string
+modulepath =
+
+
+# Can specify this multiple times
+# data for each unique resource_id OR group_id will be published in turn
+#[[resources]]
+#name =
+#type =
+#modulepath =

@@ -5,13 +5,15 @@ import re
 
 from pathlib import Path
 
-from lmod_toolkit import lmod_spider
+import lmod_toolkit as lmtk
 
 __all__ = [
     'as_json',
     'get_ext_attrs',
     ]
 
+# Adapted from:
+# https://github.com/access-ci-org/ipf/blob/3e419ebb2d0f404454ec7a8c3630f5cf24c2d756/ipf/glue2/modules.py#L444
 EXTATTR_KEYS = [
     'Name',
     'Version',
@@ -29,13 +31,12 @@ WHATIS_RE = re.compile(r'whatis\(\[\[((?:{}))\s*:\s*(.*)\]\]\)'.format('|'.join(
 COMMENT_RE = re.compile(r'\"((?:{})):([^\"]+)\"'.format('|'.join(LONGEST_FIRST)))
 
 
-@functools.cache
 def get_ext_attrs():
     ''' Search through all modules' lua files for any extended attributes.
         Extended attributes are non-lmod supported data added to a lua file.
     '''
     ext_attrs = {}
-    for module in lmod_spider.get_module_data():
+    for module in lmtk.lmod_spider.get_module_data():
         for version in module[ 'versions' ]:
             path = version[ 'path' ]
             # skip non-lua files
@@ -57,6 +58,8 @@ def get_ext_attrs():
     return ext_attrs
 
 
+# wrapping this with functools.cache ensures we open a file only once
+@functools.cache
 def get_ext_attrs_from_lua_file( text: str ) -> dict:
     ''' text parsing taken from
         https://github.com/access-ci-org/ipf/blob/3e419ebb/ipf/glue2/modules.py#L444
@@ -71,8 +74,12 @@ def get_ext_attrs_from_lua_file( text: str ) -> dict:
     return ext_attrs
 
 
+def as_dict():
+    return get_ext_attrs()
+
+
 def as_json():
-    return json.dumps( get_ext_attrs() )
+    return json.dumps( as_dict() )
 
 
 if __name__ == '__main__':

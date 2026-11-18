@@ -2,10 +2,14 @@ import functools
 import json
 import pprint
 import subprocess
+import sys
+
+from pathlib import Path
 
 __all__ = [
     'as_json',
     'get_config',
+    'get_spider_path',
 ]
 
 @functools.cache
@@ -19,8 +23,20 @@ def get_config():
     return json.loads( result.stderr )
 
 
+@functools.cache
+def get_spider_path():
+    this_py_module = sys.modules[ __name__ ]
+    prefix = this_py_module.prefix
+    libexec = Path( prefix , 'lmod' , 'lmod' , 'libexec' )
+    return libexec / 'spider'
+
+
+def as_dict():
+    return get_config()
+
+
 def as_json():
-    return json.dumps( get_config() )
+    return json.dumps( as_dict() )
 
 
 def __getattr__( name ):

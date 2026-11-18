@@ -67,17 +67,18 @@ if [[ -n "${MANUAL}" ]] ; then
   echo '---------------------------------'
 fi
 
-# stop anything running
-# [[ -x "${IPF_BIN}"/wfm ]] && ${ACTION} bash "${IPF_BIN}"/wfm stop
+# Unless upgrade is specified, do a full clean & reinstall
+if [[ -z "${LMTK_ALLOW_UPGRADE}" ]] ; then
+  # cleanup any existing installs
+  ${ACTION} rm -rf "${LMTK_INSTALL_DIR}"
 
-# cleanup any existing installs
-${ACTION} rm -rf "${LMTK_INSTALL_DIR}"
-# ${ACTION} rm -rf "${HOME}"/.cache/pip #shouldn't need this anymore since switched to UV
+  # rm local setup script
+  ${ACTION} rm -f "${LMTK_SETUP}"
+fi
 
-# get new setup script
-${ACTION} rm -f "${LMTK_SETUP}"
-${ACTION} curl -o "${LMTK_SETUP}" "${LMTK_SETUP_URL}"
-# and run it
+# get new setup script (if needed)
+[[ -f "${LMTK_SETUP}" ]] || ${ACTION} curl -o "${LMTK_SETUP}" "${LMTK_SETUP_URL}"
+# run setup script
 ${ACTION} bash "${LMTK_SETUP}"
 
 # validate install

@@ -8,6 +8,8 @@ build-backend = "setuptools.build_meta:__legacy__"
 name = "lmod-toolkit"
 requires-python = ">=3.14"
 dependencies = [
+  "platformdirs",
+  "requests",
 ]
 dynamic = [
   "version",
