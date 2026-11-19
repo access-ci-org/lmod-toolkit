@@ -168,7 +168,7 @@ update_files() {
 mk_symlinks() {
   [[ $DEBUG -eq $YES ]] && set -x
   pushd "$INSTALL_DIR"
-  local _symlink_dirs=( bin etc configure lib var )
+  # local _symlink_dirs=( bin etc configure lib var )
   # for d in "${_symlink_dirs[@]}"; do
   #   [[ -L $d ]] || ln -s "$LMTK_PATH"/$d
   # done
@@ -193,8 +193,8 @@ mk_venv
 
 install_lmod_toolkit
 
-# update_files
+update_files
 
-# mk_symlinks
+mk_symlinks
 
 # restore_config_links

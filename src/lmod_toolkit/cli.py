@@ -13,7 +13,7 @@ def get_args( params=None ):
     parser = argparse.ArgumentParser( **constructor_args )
     # parser.add_argument( '-d', '--debug', action='store_true' )
     # parser.add_argument( '-v', '--verbose', action='store_true' )
-    action = add_mutually_exclusive_group( required=True )
+    action = parser.add_mutually_exclusive_group( required=True )
     action.add_argument( '--test',
         dest='action',
         help='Test run of gathering publishing data' )
@@ -32,10 +32,10 @@ def get_args( params=None ):
 def main():
     args = get_args()
     if args.action == 'test':
-        echo "TEST"
+        print( "TEST" )
     elif args.action == 'publish':
-        echo "PUBLISH"
+        print( "PUBLISH" )
     elif args.action == 'mkcfg':
-        echo "MKCFG"
+        print( "MKCFG" )
     else:
         raise UserWarning( f"Unknown or invalid action: '{args.action}'" )
