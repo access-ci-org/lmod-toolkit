@@ -15,13 +15,19 @@ def get_args( params=None ):
     # parser.add_argument( '-v', '--verbose', action='store_true' )
     action = parser.add_mutually_exclusive_group( required=True )
     action.add_argument( '--test',
+        const='test',
         dest='action',
+        action='store_const',
         help='Test run of gathering publishing data' )
     action.add_argument( '--mkcfg',
+        const='mkcfg',
         dest='action',
+        action='store_const',
         help='Copy a sample config into the default location' )
     action.add_argument( '--publish',
+        const='publish',
         dest='action',
+        action='store_const',
         help='Collect and publish data (default)' )
     # parser.set_defaults(
     #     action = 'publish',
