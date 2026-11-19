@@ -38,7 +38,7 @@ def get_args( params=None ):
 def main():
     args = get_args()
     if args.action == 'test':
-        print( "TEST" )
+        lmtk.test
     elif args.action == 'publish':
         print( "PUBLISH" )
     elif args.action == 'mkcfg':
