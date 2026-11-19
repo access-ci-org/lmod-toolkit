@@ -30,4 +30,12 @@ def get_args( params=None ):
     return args
 
 def main():
-    
+    args = get_args()
+    if args.action == 'test':
+        echo "TEST"
+    elif args.action == 'publish':
+        echo "PUBLISH"
+    elif args.action == 'mkcfg':
+        echo "MKCFG"
+    else:
+        raise UserWarning( f"Unknown or invalid action: '{args.action}'" )
