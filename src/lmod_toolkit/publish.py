@@ -49,7 +49,7 @@ def write_to_local_file( data: dict, datatype: string ) -> Path:
 
     # write data
     with outfile.open( mode='w', encoding='utf-8' ) as fh:
-        json.dump( data, fh )
+        json.dump( data, fh, default=str )
 
     return outfile
 
